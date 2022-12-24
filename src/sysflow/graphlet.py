@@ -36,35 +36,35 @@ tqdm.__init__ = partialmethod(tqdm.__init__, disable=True)
 INFSYMB = '&infin;'
 
 FLOW_FIELDS = [
-    'event.start',
-    'event.end',
+    'head.ts',
+    'head.endts',
     'event.type',
     'event.opflags',
-    'process.pid',
+    'process.oid.hpid',
     'process.tid',
-    'parent.pid',
-    'process.executable',
+    'pprocess.oid.hpid',
+    'process.exe',
     'process.args',
-    'parent.executable',
-    'parent.args',
+    'pprocess.exe',
+    'pprocess.args',
     'res',
-    'flow.rbytes',
-    'flow.rops',
-    'flow.wbytes',
-    'flow.wops',
+    'file_action.bytes_read',
+    'file_action.read_ops',
+    'file_action.bytes_written',
+    'file_action.write_ops',
     'container.id',
     'tags',
 ]
 EVT_FIELDS = [
-    'event.start',
+    'head.ts',
     'event.sf_type',
     'event.opflags',
     'process.pid',
     'process.tid',
-    'parent.pid',
-    'process.executable',
+    'pprocess.pid',
+    'process.exe',
     'process.args',
-    'parent.executable',
+    'pprocess.exe',
     'tags',
 ]
 
@@ -82,7 +82,7 @@ class Graphlet(object):
          g1.view()
 
          # filtering and enrichment with policies
-         ioc1 = 'process.executable = /usr/bin/scp'
+         ioc1 = 'process.exe = /usr/bin/scp'
          g1 = Graphlet('data/', ioc1, ['policies/ttps.yaml'])
          g1.view()
 
@@ -122,11 +122,10 @@ class Graphlet(object):
 
 
     def __create(self, expr=None):
-        print("11111")
-        for objtype, head, event, host, container, pod, file, file_action, network, source, destination, process, parent, user in self.sfqlint.filter(self.reader, expr):
+        for objtype, head, event, host, container, pod, file, file_action, network, source, destination, process, pprocess in self.sfqlint.filter(self.reader, expr):
             print("==========================")
             print("objtype\t",objtype)
-            print(head.ts)
+            print("head\t", head)
             print("event\t", event)
             print("host\t", host)
             print("container\t", container)
@@ -137,137 +136,136 @@ class Graphlet(object):
             print("source\t", source)
             print("destination\t", destination)
             print("process\t", process)
-            print("parent\t", parent)
-            print("user\t", user)
+            print("pprocess\t", pprocess)
 
-            tags = self.sfqlint.enrich((objtype, head, event, host, container, pod, file, file_action, network, source, destination, process, parent, user))
+            tags = self.sfqlint.enrich((objtype, head, event, host, container, pod, file, file_action, network, source, destination, process, pprocess))
 
             if objtype == ObjectTypes.PROC_EVT:
-                if process.oid.hpid != process.thread.id or not parent:
+                if process.oid.hpid != process.tid or not pprocess:
                     continue
-                r = self.fmt._flatten(objtype, head, event, host, container, pod, file, file_action, network, source, destination, process, parent, user, None, tags=tags)
+                r = self.fmt._flatten(objtype, head, event, host, container, pod, file, file_action, network, source, destination, process, pprocess, None, tags=tags)
                 opflag = utils.getOpFlagsStr(event.opflags_int)
 
-                filt = lambda v: (v.exe, v.args) == (process.executable, process.args) and v.hasProc(
-                    parent.oid.hpid, parent.oid.createTS
+                filt = lambda v: (v.exe, v.args) == (process.exe, process.args) and v.hasProc(
+                    pprocess.oid.hpid, pprocess.oid.createTS
                 )
-                if opflag == utils.getOpFlagsStr(opflags.OP_CLONE) and (process.executable, process.args) == (
-                    parent.executable, parent.args,
+                if opflag == utils.getOpFlagsStr(opflags.OP_CLONE) and (process.exe, process.args) == (
+                    pprocess.exe, pprocess.args,
                 ):
-                    self.__addProcEvtEdge(opflag, process, parent, user, r, filt)
+                    self.__addProcEvtEdge(opflag, process, pprocess, r, filt)
 
-                filt = lambda v: (v.exe, v.args) != (process.executable, process.args) and v.hasProc(
+                filt = lambda v: (v.exe, v.args) != (process.exe, process.args) and v.hasProc(
                     process.oid.hpid, process.oid.createTS
                 )
                 if opflag == utils.getOpFlagsStr(opflags.OP_EXEC):
-                    self.__addProcEvtEdge(opflag, process, parent, user, r, filt)
+                    self.__addProcEvtEdge(opflag, process, pprocess, r, filt)
 
-                filt = lambda v: (v.exe, v.args) == (process.executable, process.args) and v.hasProc(
+                filt = lambda v: (v.exe, v.args) == (process.exe, process.args) and v.hasProc(
                     process.oid.hpid, process.oid.createTS
                 )
                 if opflag == utils.getOpFlagsStr(opflags.OP_EXIT):
-                    self.__addProcEvtEdge(opflag, process, parent, user, r, filt)
+                    self.__addProcEvtEdge(opflag, process, pprocess, r, filt)
 
-            if objtype == ObjectTypes.FILE_FLOW and file.path != process.executable:
-                filt = lambda v: (v.exe, v.args) == (process.executable, process.args) and v.hasProc(
+            if objtype == ObjectTypes.FILE_FLOW and file.path != process.exe:
+                filt = lambda v: (v.exe, v.args) == (process.exe, process.args) and v.hasProc(
                     process.oid.hpid, process.oid.createTS
                 )
-                r = self.fmt._flatten(objtype, head, event, host, container, pod, file, file_action, network, source, destination, process, parent, user, None, tags=tags)
-                self.__addFileFlowEdge(process, parent, user, r, filt)
+                r = self.fmt._flatten(objtype, head, event, host, container, pod, file, file_action, network, source, destination, process, pprocess, None, tags=tags)
+                self.__addFileFlowEdge(process, pprocess, r, filt)
 
             if objtype == ObjectTypes.NET_FLOW:
-                filt = lambda v: (v.exe, v.args) == (process.executable, process.args) and v.hasProc(
+                filt = lambda v: (v.exe, v.args) == (process.exe, process.args) and v.hasProc(
                     process.oid.hpid, process.oid.createTS
                 )
-                r = self.fmt._flatten(objtype, head, event, host, container, pod, file, file_action, network, source, destination, process, parent, user, None, tags=tags)
-                self.__addNetFlowEdge(process, parent, user, r, filt)
+                r = self.fmt._flatten(objtype, head, event, host, container, pod, file, file_action, network, source, destination, process, pprocess, None, tags=tags)
+                self.__addNetFlowEdge(process, pprocess, r, filt)
 
-    def __addProcEvtEdge(self, opflag, process, parent, user, r, filt):
-        n1_k = _hash((process.executable, process.args, parent.executable, parent.args))
+    def __addProcEvtEdge(self, opflag, process, pprocess, r, filt):
+        n1_k = _hash((process.exe, process.args, pprocess.exe, pprocess.args))
         if n1_k in self.nodes:
             n1_v = self.nodes[n1_k]
         else:
             n1_v = ProcessNode(
-                n1_k, process.executable, process.args, user.id, user.name, user.group.id, user.group.name, process.tty
+                n1_k, process.exe, process.args, process.uid, process.user, process.gid, process.group, process.tty
             )
         n1_v.addProc(process.oid.hpid, process.oid.createTS, r)
         self.nodes[n1_k] = n1_v
 
         if opflag == utils.getOpFlagsStr(opflags.OP_EXEC):
-            p = parent
+            p = pprocess
             n2_k, n2_v = self.__findNode(filt)
         if opflag == utils.getOpFlagsStr(opflags.OP_CLONE):
-            p = parent
+            p = pprocess
             n2_k, n2_v = self.__findNode(filt)
         if opflag == utils.getOpFlagsStr(opflags.OP_EXIT):
             p = process
             n2_k, n2_v = self.__findNode(filt)
 
         if not n2_k:
-            key = self.reader.getProcessKey(p.parent.oid) if hasattr(p, "parent") else None
+            key = self.reader.getProcessKey(pprocess.oid) if pprocess else None
             if key in self.reader.processes:
                 pp = self.reader.processes[key]
-                n2_k = _hash((p.executable, p.args, pp.executable, pp.args))
+                n2_k = _hash((p.exe, p.args, pp.exe, pp.args))
             else:
-                n2_k = _hash((p.executable, p.args))
-            n2_v = ProcessNode(n2_k, p.executable, p.args, user.id, user.name, user.group.id, user.group.name, p.tty)
+                n2_k = _hash((p.exe, p.args))
+            n2_v = ProcessNode(n2_k, p.exe, p.args, p.uid, p.user, p.gid, p.group, p.tty)
             n2_v.addProc(p.oid.hpid, p.oid.createTS, None)
             self.nodes[n2_k] = n2_v
         self.edges.add(EvtEdge(n2_k, n1_k, opflag))
 
-    def __addFileFlowEdge(self, process, parent, user, r, filt):
-        if parent:
-            n1_k = _hash((process.executable, process.args, OBJECT_MAP[ObjectTypes.FILE_FLOW], parent.executable, parent.args))
+    def __addFileFlowEdge(self, process, pprocess, r, filt):
+        if pprocess:
+            n1_k = _hash((process.exe, process.args, OBJECT_MAP[ObjectTypes.FILE_FLOW], pprocess.exe, pprocess.args))
         else:
-            n1_k = _hash((process.executable, process.args, OBJECT_MAP[ObjectTypes.FILE_FLOW]))
+            n1_k = _hash((process.exe, process.args, OBJECT_MAP[ObjectTypes.FILE_FLOW]))
         new = False
         if n1_k in self.nodes:
             n1_v = self.nodes[n1_k]
         else:
-            n1_v = FileFlowNode(n1_k, process.executable, process.args)
+            n1_v = FileFlowNode(n1_k, process.exe, process.args)
             new = True
         n1_v.addFlow(r)
         self.nodes[n1_k] = n1_v
         if new:
             n2_k, n2_v = self.__findNode(filt)
             if not n2_k:
-                key = self.reader.getProcessKey(process.parent.oid) if process.parent.oid else None
+                key = self.reader.getProcessKey(pprocess.oid) if pprocess.oid else None
                 if key in self.reader.processes:
                     pp = self.reader.processes[key]
-                    n2_k = _hash((process.executable, process.args, pp.executable, pp.args))
+                    n2_k = _hash((process.exe, process.args, pp.exe, pp.args))
                 else:
-                    n2_k = _hash((process.executable, process.args))
+                    n2_k = _hash((process.exe, process.args))
                 n2_v = ProcessNode(
-                    n2_k, process.executable, process.args, user.id, user.name, user.group.id, user.group.name, process.tty
+                    n2_k, process.exe, process.args, process.uid, process.user, process.gid, process.group, process.tty
                 )
                 n2_v.addProc(process.oid.hpid, process.oid.createTS, None)
                 self.nodes[n2_k] = n2_v
             self.edges.add(FlowEdge(n2_k, n1_k, OBJECT_MAP[ObjectTypes.FILE_FLOW]))
 
-    def __addNetFlowEdge(self, process, parent, user, r, filt):
-        if parent:
-            n1_k = _hash((process.executable, process.args, OBJECT_MAP[ObjectTypes.NET_FLOW], parent.executable, parent.args))
+    def __addNetFlowEdge(self, process, pprocess, r, filt):
+        if pprocess:
+            n1_k = _hash((process.exe, process.args, OBJECT_MAP[ObjectTypes.NET_FLOW], pprocess.exe, pprocess.args))
         else:
-            n1_k = _hash((process.executable, process.args, OBJECT_MAP[ObjectTypes.NET_FLOW]))
+            n1_k = _hash((process.exe, process.args, OBJECT_MAP[ObjectTypes.NET_FLOW]))
         new = False
         if n1_k in self.nodes:
             n1_v = self.nodes[n1_k]
         else:
-            n1_v = NetFlowNode(n1_k, process.executable, process.args)
+            n1_v = NetFlowNode(n1_k, process.exe, process.args)
             new = True
         n1_v.addFlow(r)
         self.nodes[n1_k] = n1_v
         if new:
             n2_k, n2_v = self.__findNode(filt)
             if not n2_k:
-                key = self.reader.getProcessKey(process.parent.oid) if process.parent.oid else None
+                key = self.reader.getProcessKey(pprocess.oid) if pprocess.oid else None
                 if key in self.reader.processes:
                     pp = self.reader.processes[key]
-                    n2_k = _hash((process.executable, process.args, pp.executable, pp.args))
+                    n2_k = _hash((process.exe, process.args, pp.exe, pp.args))
                 else:
-                    n2_k = _hash((process.executable, process.args))
+                    n2_k = _hash((process.exe, process.args))
                 n2_v = ProcessNode(
-                    n2_k, process.executable, process.args, user.id, user.name, user.group.id, user.group.name, process.tty
+                    n2_k, process.exe, process.args, process.uid, process.user, process.gid, process.group, process.tty
                 )
                 n2_v.addProc(process.oid.hpid, process.oid.createTS, None)
                 self.nodes[n2_k] = n2_v
@@ -375,7 +373,7 @@ class Graphlet(object):
             if not oid or oid == r.oid:
                 df = pd.concat([df, r.df()])
         df.reindex()
-        df.sort_values(by=['event.start'], inplace=True, ignore_index=True)
+        df.sort_values(by=['head.ts'], inplace=True, ignore_index=True)
         return df
 
     def tags(self, oid=None):
@@ -849,12 +847,12 @@ class FileFlowNode(Node):
         for idx, r in enumerate(self.data):
             data[idx] = r.values()
         df = pd.DataFrame.from_dict(data, orient='index', columns=r.keys() if r else None)
-        # return df[(df['file.path'] != '') & ((df['flow.rops'] > 0) | (df['flow.wops'] > 0))]
+        # return df[(df['file.path'] != '') & ((df['file_action.read_ops'] > 0) | (df['file_action.write_ops'] > 0))]
         return df[(df['file.path'] != '')]
 
     def interval(self):
         ts = str(self.df()[['head.ts']].min().to_string(index=False)).strip()
-        te = str(self.df()[['head.ts']].max().to_string(index=False)).strip()  # INFSYMB
+        te = str(self.df()[['head.endts']].max().to_string(index=False)).strip()  # INFSYMB
         return (ts, te)
 
     def plot(self):
@@ -960,21 +958,21 @@ class NetFlowNode(Node):
             data[idx] = r.values()
         df = pd.DataFrame.from_dict(data, orient='index', columns=r.keys() if r else None)
         # return df
-        return df[((df['flow.rops'] > 0) | (df['flow.wops'] > 0))]
+        return df[((df['file_action.read_ops'] > 0) | (df['file_action.write_ops'] > 0))]
 
     def plot(self):
         df = self.df()
         flows = df[(df.type.isin(['NF']))]
-        ax = flows[['event.start', 'flow.rbytes', 'flow.wbytes']].plot.bar(
-            x='event.start', y=['flow.rbytes', 'flow.wbytes'], rot=45, figsize=(20, 5)
+        ax = flows[['head.ts', 'file_action.bytes_read', 'file_action.bytes_written']].plot.bar(
+            x='head.ts', y=['file_action.bytes_read', 'file_action.bytes_written'], rot=45, figsize=(20, 5)
         )
         ax.xaxis.set_major_locator(mdates.AutoDateLocator())
         plt.gcf().autofmt_xdate()
         plt.show()
 
     def interval(self):
-        ts = str(self.df()[['event.start']].min().to_string(index=False)).strip()
-        te = str(self.df()[['event.end']].max().to_string(index=False)).strip()  # INFSYMB
+        ts = str(self.df()[['head.ts']].min().to_string(index=False)).strip()
+        te = str(self.df()[['head.endts']].max().to_string(index=False)).strip()  # INFSYMB
         return (ts, te)
 
     def score(self):
@@ -996,15 +994,15 @@ class NetFlowNode(Node):
         peeknode = 'NF|{{{{{0}|{1}|{2}}}|{{{3}, {4}, {5}, {6}}}|{{{7}}}{8}}}'
         oidnode = 'NF|{{{0}|{{{1}|{2}|{3}}}|{{{4}, {5}, {6}, {7}}}{8}}}'
         peekoidnode = 'NF|{{{0}|{{{1}|{2}|{3}}}|{{{4}, {5}, {6}, {7}}}|{{{8}}}{9}}}'
-        flowstats = self.df()[['flow.rbytes', 'flow.wbytes', 'flow.rops', 'flow.wops']].sum(axis=0, skipna=True)
-        rb = flowstats['flow.rbytes']
-        rop = flowstats['flow.rops']
-        wb = flowstats['flow.wbytes']
-        wop = flowstats['flow.wops']
+        flowstats = self.df()[['file_action.bytes_read', 'file_action.bytes_written', 'file_action.read_ops', 'file_action.write_ops']].sum(axis=0, skipna=True)
+        rb = flowstats['file_action.bytes_read']
+        rop = flowstats['file_action.read_ops']
+        wb = flowstats['file_action.bytes_written']
+        wop = flowstats['file_action.write_ops']
         uips = len(pd.unique(self.df()[['net.sip', 'net.dip']].values.ravel('K')))
         uports = len(pd.unique(self.df()[['net.sport', 'net.dport']].values.ravel('K')))
         uprotos = self.df()['net.proto'].unique()
-        res = self.df()[['res', 'event.start']].groupby(['res']).count()[['event.start']].rename(columns={'event.start': 'count'})
+        res = self.df()[['res', 'head.ts']].groupby(['res']).count()[['head.ts']].rename(columns={'head.ts': 'count'})
         reslist = res.index.tolist()
         details = reslist[-peeksize:] + (reslist[peeksize:] and ['...'])
         peekstr = _escape('\\n'.join(details))

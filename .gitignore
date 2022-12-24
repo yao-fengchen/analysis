@@ -1,0 +1,6 @@
+# pycache
+sysflow/__pycache__/
+sysflow/grammar/__pycache__
+
+# log
+log

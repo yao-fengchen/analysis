@@ -64,7 +64,6 @@ class FlattenedSFReader(SFReader):
     def __init__(self, filename, retEntities=False):
         super().__init__(filename)
         self.processes = dict()
-        self.parents = dict()
         self.files = dict()
         self.containers = dict()
         self.pods = dict()
@@ -95,9 +94,6 @@ class FlattenedSFReader(SFReader):
     def __next__(self):
         while True:
             objtype, rec = super().next()
-            if rec is None:
-                print("no")
-            print("yes")
             pod = None
             container = None
             file = None
@@ -111,12 +107,15 @@ class FlattenedSFReader(SFReader):
                 container = rec.container
                 self.containers[key] = rec.container
             if hasattr(rec, "process"):
-                parent= rec.process.parent
                 process = rec.process
-                keyParent = self.getProcessKey(rec.process.parent.oid)
-                keyProcess = self.getProcessKey(rec.process.oid)
-                self.parents[keyParent] = rec.process.parent
-                self.processes[keyProcess] = rec.process
+                key = self.getProcessKey(rec.process.oid)
+                self.processes[key] = rec.process
+            if hasattr(rec, "pprocess"):
+                pprocess = rec.pprocess
+                key = self.getProcessKey(rec.pprocess.oid)
+                if key not in self.processes:
+                    self.processes[key] = rec.pprocess
+
 
             if hasattr(rec, "file"):
                 file = rec.file
@@ -127,13 +126,8 @@ class FlattenedSFReader(SFReader):
             head = rec.head if hasattr(rec, "head") else None
             event = rec.event if hasattr(rec, "event") else None
             host = rec.host if hasattr(rec, "host") else None
-            sf_file_action = rec.sf_file_action if hasattr(rec, "sf_file_action") else None
+            file_action = rec.sf_file_action if hasattr(rec, "sf_file_action") else None
             network = rec.network if hasattr(rec, "network") else None
             source = rec.source if hasattr(rec, "source") else None
             destination = rec.destination if hasattr(rec, "destination") else None
-            user = rec.user if hasattr(rec, "user") else None
-            # if self.retEntities:
-            #     print("=====")
-            # if head.ts == 1671882630293085511:
-            #     print(rec)
-            return (objtype, head, event, host, container, pod, file, sf_file_action, network, source, destination, process, parent, user)
+            return (objtype, head, event, host, container, pod, file, file_action, network, source, destination, process, pprocess)

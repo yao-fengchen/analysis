@@ -25,13 +25,13 @@ _version = '4'
 _default_fields = [
     'event.start',
     'event.sf_type',
-    'process.executable',
+    'process.exe',
     'process.args',
-    'parent.pid',
-    'process.pid',
-    'process.thread.id',
-    'sf_file_action.bytes_read',
-    'sf_file_action.bytes_written',
+    'pprocess.oid.hpid',
+    'process.oid.hpid',
+    'process.tid',
+    'file_action.bytes_read',
+    'file_action.bytes_written',
     'container.id',
     'container.name'
 ]
@@ -41,6 +41,7 @@ _fields = {  #   '<key>': (<columnn name>, <column width>, <description>, <query
     'res': ('Resource', 45, 'File or network resource', False),
 
     'head.ts': ('head.ts', 10, 'Head ts', False),
+    'head.endts': ('head.endts', 10, 'Head endts', False),
     'head.type': ('head.type', 10, 'Head type', False),
 
     'event.action': ('event.action', 10, 'Event action', False),
@@ -76,11 +77,11 @@ _fields = {  #   '<key>': (<columnn name>, <column width>, <description>, <query
     'file.path': ('file.path', 10, 'File path', False),
     'file.type': ('file.type', 10, 'File type', False),
 
-    'file_action.bytes_read': ('sf_file_action.bytes_read', 10, 'Sf_File_Action bytes_read', False),
-    'file_action.read_ops': ('sf_file_action.read_ops', 10, 'Sf_File_Action read_ops', False),
-    'file_action.bytes_written': ('sf_file_action.bytes_written', 10, 'Sf_File_Action bytes_written', False),
-    'file_action.write_ops': ('sf_file_action.write_ops', 10, 'Sf_File_Action write_ops', False),
-    'file_action.gap_time': ('sf_file_action.gap_time', 10, 'Sf_File_Action gap_time', False),
+    'file_action.bytes_read': ('file_action.bytes_read', 10, 'File_Action bytes_read', False),
+    'file_action.read_ops': ('file_action.read_ops', 10, 'File_Action read_ops', False),
+    'file_action.bytes_written': ('file_action.bytes_written', 10, 'File_Action bytes_written', False),
+    'file_action.write_ops': ('file_action.write_ops', 10, 'File_Action write_ops', False),
+    'file_action.gap_time': ('file_action.gap_time', 10, 'File_Action gap_time', False),
 
     'network.bytes': ('network.bytes', 10, 'Network bytes', False),
     'network.community_id': ('network.community_id', 10, 'Network community_id', False),
@@ -100,38 +101,31 @@ _fields = {  #   '<key>': (<columnn name>, <column width>, <description>, <query
 
     'process.args': ('process.args', 10, 'Process args', False),
     'process.command_line': ('process.command_line', 10, 'Process command_line', False),
-    'process.executable': ('process.executable', 10, 'Process executable', False),
+    'process.exe': ('process.exe', 10, 'Process exe', False),
     'process.name': ('process.name', 10, 'Process name', False),
-    'process.thread.id': ('process.thread.id', 10, 'Process thread id', False),
+    'process.aname': ('process.aname', 10, 'Process ancester name', False),
+    'process.tid': ('process.tid', 10, 'Process thread id', False),
     'process.start': ('process.start', 10, 'Process start', False),
     'process.tty': ('process.tty', 10, 'Process tty', False),
     'process.oid.hpid': ('process.oid.hpid', 10, 'Process hpid', False),
     'process.oid.createTS': ('process.oid.createTS', 10, 'Process createTS', False),
+    'process.uid': ('process.uid', 10, 'Process user id', False),
+    'process.user': ('process.user', 10, 'Process user name', False),
+    'process.gid': ('process.gid', 10, 'Process group id', False),
+    'process.group': ('process.group', 10, 'Process group name', False),
 
-    'process.parent.args': ('process.parent.args', 10, 'Process parent', False),
-    'process.parent.command_line': ('process.parent.command_line', 10, 'Process parent', False),
-    'process.parent.executable': ('process.parent.executable', 10, 'Process parent', False),
-    'process.parent.name': ('process.parent.name', 10, 'Process parent', False),
-    'process.parent.thread.id': ('process.parent.thread.id', 10, 'Process parent', False),
-    'process.parent.start': ('process.parent.start', 10, 'Process parent', False),
-    'process.parent.tty': ('process.parent.tty', 10, 'Process parent', False),
-    'process.parent.oid.hpid': ('process.parent.oid.hpid', 10, 'Process hpid', False),
-    'process.parent.oid.createTS': ('process.parent.oid.createTS', 10, 'Process createTS', False),
-
-    'parent.args': ('parent.args', 10, 'Parent args', False),
-    'parent.command_line': ('parent.command_line', 10, 'Parent command_line', False),
-    'parent.executable': ('parent.executable', 10, 'Parent executable', False),
-    'parent.name': ('parent.name', 10, 'Parent name', False),
-    'parent.thread.id': ('parent.thread.id', 10, 'Parent thread.id', False),
-    'parent.start': ('parent.start', 10, 'Parent start', False),
-    'parent.tty': ('parent.tty', 10, 'Parent tty', False),
-    'parent.oid.hpid': ('parent.oid.hpid', 10, 'Parent hpid', False),
-    'parent.oid.createTS': ('parent.oid.createTS', 10, 'Parent createTS', False),
-
-    'user.group.id': ('user.group.id', 10, 'User group', False),
-    'user.group.name': ('user.group.name', 10, 'User group', False),
-    'user.id': ('user.id', 10, 'User id', False),
-    'user.name': ('user.name', 10, 'User name', False),
+    'pprocess.args': ('pprocess.args', 10, 'Parent Process args', False),
+    'pprocess.command_line': ('pprocess.command_line', 10, 'Parent Process command_line', False),
+    'pprocess.exe': ('pprocess.exe', 10, 'Parent Process exe', False),
+    'pprocess.name': ('pprocess.name', 10, 'Parent Process name', False),
+    'pprocess.start': ('pprocess.start', 10, 'Parent Process start', False),
+    'pprocess.tty': ('pprocess.tty', 10, 'Parent Process tty', False),
+    'pprocess.oid.hpid': ('pprocess.oid.hpid', 10, 'Parent Process hpid', False),
+    'pprocess.oid.createTS': ('pprocess.oid.createTS', 10, 'Parent Process createTS', False),
+    'pprocess.uid': ('pprocess.uid', 10, 'Parent Process user id', False),
+    'pprocess.user': ('pprocess.user', 10, 'Parent Process user name', False),
+    'pprocess.gid': ('pprocess.gid', 10, 'Parent Process group id', False),
+    'pprocess.group': ('pprocess.group', 10, 'Parent Process group name', False),
 }
 
 
@@ -373,7 +367,7 @@ class SFFormatter(object):
             columns, row = fallback
         return columns, row
 
-    def _flatten(self, objtype, head, event, host, container, pod, file, file_action, network, source, destination, process, parent, user, fields, tags=None):
+    def _flatten(self, objtype, head, event, host, container, pod, file, file_action, network, source, destination, process, pprocess, fields, tags=None):
         _flat_map = OrderedDict()
         _flat_map['type'] = OBJECT_MAP.get(objtype, '?')
         if object in [ObjectTypes.FILE_FLOW, ObjectTypes.FILE_EVT]:
@@ -384,6 +378,7 @@ class SFFormatter(object):
             _flat_map['res'] = ''
 
         _flat_map['head.ts'] = head.ts if head else ''
+        _flat_map['head.endts'] = head.endts if head else ''
         _flat_map['head.type'] = head.type if head else ''
 
         _flat_map['event.actoin'] = event.action if event else ''
@@ -443,38 +438,31 @@ class SFFormatter(object):
 
         _flat_map['process.args'] = process.args if process else ''
         _flat_map['process.command_line'] = process.command_line if process else ''
-        _flat_map['process.executable'] = process.executable if process else ''
+        _flat_map['process.exe'] = process.exe if process else ''
         _flat_map['process.name'] = process.name if process else ''
-        _flat_map['process.thread.id'] = process.thread.id if process else ''
+        _flat_map['process.aname'] = process.aname if process else ''
+        _flat_map['process.tid'] = process.tid if process else ''
         _flat_map['process.start'] = process.start if process else ''
         _flat_map['process.tty'] = process.tty if process else None
         _flat_map['process.oid.hpid'] = process.oid.hpid if process else None
         _flat_map['process.oid.createTS'] = process.oid.createTS if process else None
+        _flat_map['process.uid'] = process.uid if process else None
+        _flat_map['process.user'] = process.user if process else None
+        _flat_map['process.gid'] = process.gid if process else None
+        _flat_map['process.group'] = process.group if process else None
 
-        _flat_map['process.parent.args'] = process.parent.args if process else ''
-        _flat_map['process.parent.command_line'] = process.parent.command_line if process else ''
-        _flat_map['process.parent.executable'] = process.parent.executable if process else ''
-        _flat_map['process.parent.name'] = process.parent.name if process else ''
-        _flat_map['process.parent.thread.id'] = process.parent.thread.id if process else ''
-        _flat_map['process.parent.start'] = process.parent.start if process else ''
-        _flat_map['process.parent.tty'] = process.parent.tty if process else None
-        _flat_map['process.parent.oid.hpid'] = process.parent.oid.hpid if process else None
-        _flat_map['process.parent.oid.createTS'] = process.parent.oid.createTS if process else None
-
-        _flat_map['parent.args'] = parent.args if parent else ''
-        _flat_map['parent.command_line'] = parent.command_line if parent else ''
-        _flat_map['parent.executable'] = parent.executable if parent else ''
-        _flat_map['parent.name'] = parent.name if parent else ''
-        _flat_map['parent.thread.id'] = parent.thread.id if parent else ''
-        _flat_map['parent.start'] = parent.start if parent else ''
-        _flat_map['parent.tty'] = parent.tty if parent else None
-        _flat_map['parent.oid.hpid'] = parent.oid.hpid if parent else None
-        _flat_map['parent.oid.createTS'] = parent.oid.createTS if parent else None
-
-        _flat_map['user.goup.id'] = user.group.id if user else None
-        _flat_map['user.goup.name'] = user.group.name if user else ''
-        _flat_map['user.id'] = user.id if user else None
-        _flat_map['user.name'] = user.name if user else ''
+        _flat_map['pprocess.args'] = pprocess.args if pprocess else ''
+        _flat_map['pprocess.command_line'] = pprocess.command_line if pprocess else ''
+        _flat_map['pprocess.exe'] = pprocess.exe if pprocess else ''
+        _flat_map['pprocess.name'] = pprocess.name if pprocess else ''
+        _flat_map['pprocess.start'] = pprocess.start if pprocess else ''
+        _flat_map['pprocess.tty'] = pprocess.tty if pprocess else None
+        _flat_map['pprocess.oid.hpid'] = pprocess.oid.hpid if pprocess else None
+        _flat_map['pprocess.oid.createTS'] = pprocess.oid.createTS if pprocess else None
+        _flat_map['pprocess.uid'] = pprocess.uid if pprocess else None
+        _flat_map['pprocess.user'] = pprocess.user if pprocess else None
+        _flat_map['pprocess.gid'] = pprocess.gid if pprocess else None
+        _flat_map['pprocess.group'] = pprocess.group if pprocess else None
 
         if not self.allFields and fields:
             od = OrderedDict()
@@ -484,9 +472,9 @@ class SFFormatter(object):
 
         return _flat_map
 
-    def _nest(self, objtype, event, host, container, pod, file, sf_file_action, network, source, destination, process, parent, user, fields):
+    def _nest(self, objtype, event, host, container, pod, file, sf_file_action, network, source, destination, process, pprocess, fields):
         d = dotty()
-        r = self._flatten(objtype, event, host, container, pod, file, sf_file_action, network, source, destination, process, parent, user, fields)
+        r = self._flatten(objtype, event, host, container, pod, file, sf_file_action, network, source, destination, process, pprocess, fields)
         for k, v in r.items():
             d[k] = v
         return d.to_dict()
