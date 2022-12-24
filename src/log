@@ -1,0 +1,139 @@
+11111
+yes
+yes
+yes
+yes
+yes
+yes
+yes
+yes
+yes
+yes
+yes
+yes
+yes
+==========================
+objtype	 ObjectTypes.PROC_EVT
+1671882630293085511
+event	 NestedNamespace(action='process-start', category='process', duration=0, end='2022-12-24T11:50:30.293085511Z', kind='event', opflags='clone ', opflags_int=1, sf_ret=0, sf_type='PE', start='2022-12-24T11:50:30.293085511Z', type='start')
+host	 NestedNamespace(id='local', ip='127.0.0.1')
+container	 NestedNamespace(id='004e27b348ee', image=NestedNamespace(id='ff4607225864e20ec53174de8ac57410685aa45aed7a9837c057837bb97669c9', name='attack:latest'), name='attack', privileged=False, runtime='DOCKER')
+pod	 None
+file	 None
+file_action	 None
+network	 None
+source	 None
+destination	 None
+process	 NestedNamespace(args='./attack.sh', command_line='/bin/busybox ./attack.sh', executable='/bin/busybox', name='busybox', oid=NestedNamespace(createTS=1671882630293085511, hpid=107797), parent=NestedNamespace(args='./attack.sh', command_line='/bin/busybox ./attack.sh', executable='/bin/busybox', name='busybox', oid=NestedNamespace(createTS=1671882607095385155, hpid=106768), start='2022-12-24T11:50:07.095385155Z', thread=NestedNamespace(id=-1), tty=False), start='2022-12-24T11:50:30.293085511Z', thread=NestedNamespace(id=107797), tty=False)
+parent	 NestedNamespace(args='./attack.sh', command_line='/bin/busybox ./attack.sh', executable='/bin/busybox', name='busybox', oid=NestedNamespace(createTS=1671882607095385155, hpid=106768), start='2022-12-24T11:50:07.095385155Z', thread=NestedNamespace(id=-1), tty=False)
+user	 NestedNamespace(group=NestedNamespace(id=0, name='<NA>'), id=0, name='<NA>')
+yes
+==========================
+objtype	 ObjectTypes.FILE_FLOW
+1671882630293134611
+event	 NestedNamespace(action='file-access', category='file', duration=0, end='2022-12-24T11:50:30.293134611Z', kind='event', opflags='close ', opflags_int=1024, sf_type='FF', start='2022-12-24T11:50:30.293134611Z', type='access')
+host	 NestedNamespace(id='local', ip='127.0.0.1')
+container	 NestedNamespace(id='004e27b348ee', image=NestedNamespace(id='ff4607225864e20ec53174de8ac57410685aa45aed7a9837c057837bb97669c9', name='attack:latest'), name='attack', privileged=False, runtime='DOCKER')
+pod	 None
+file	 NestedNamespace(directory='/app', name='attack.sh', oid='80388c5288cf755c9c4789bb30c668db85d143f0', path='/app/attack.sh', type='file')
+file_action	 None
+network	 None
+source	 None
+destination	 None
+process	 NestedNamespace(args='./attack.sh', command_line='/bin/busybox ./attack.sh', executable='/bin/busybox', name='busybox', oid=NestedNamespace(createTS=1671882630293085511, hpid=107797), parent=NestedNamespace(args='./attack.sh', command_line='/bin/busybox ./attack.sh', executable='/bin/busybox', name='busybox', oid=NestedNamespace(createTS=1671882607095385155, hpid=106768), start='2022-12-24T11:50:07.095385155Z', thread=NestedNamespace(id=-1), tty=False), start='2022-12-24T11:50:30.293085511Z', thread=NestedNamespace(id=107797), tty=False)
+parent	 NestedNamespace(args='./attack.sh', command_line='/bin/busybox ./attack.sh', executable='/bin/busybox', name='busybox', oid=NestedNamespace(createTS=1671882607095385155, hpid=106768), start='2022-12-24T11:50:07.095385155Z', thread=NestedNamespace(id=-1), tty=False)
+user	 NestedNamespace(group=NestedNamespace(id=0, name='<NA>'), id=0, name='<NA>')
+yes
+==========================
+objtype	 ObjectTypes.PROC_EVT
+1671882630293392229
+event	 NestedNamespace(action='process-start', category='process', duration=0, end='2022-12-24T11:50:30.293392229Z', kind='event', opflags='exec ', opflags_int=2, sf_ret=0, sf_type='PE', start='2022-12-24T11:50:30.293392229Z', type='start')
+host	 NestedNamespace(id='local', ip='127.0.0.1')
+container	 NestedNamespace(id='004e27b348ee', image=NestedNamespace(id='ff4607225864e20ec53174de8ac57410685aa45aed7a9837c057837bb97669c9', name='attack:latest'), name='attack', privileged=False, runtime='DOCKER')
+pod	 None
+file	 None
+file_action	 None
+network	 None
+source	 None
+destination	 None
+process	 NestedNamespace(args='', command_line='/bin/df ', executable='/bin/df', name='df', oid=NestedNamespace(createTS=1671882630293085511, hpid=107797), parent=NestedNamespace(args='./attack.sh', command_line='/bin/busybox ./attack.sh', executable='/bin/busybox', name='busybox', oid=NestedNamespace(createTS=1671882607095385155, hpid=106768), start='2022-12-24T11:50:07.095385155Z', thread=NestedNamespace(id=-1), tty=False), start='2022-12-24T11:50:30.293085511Z', thread=NestedNamespace(id=107797), tty=False)
+parent	 NestedNamespace(args='./attack.sh', command_line='/bin/busybox ./attack.sh', executable='/bin/busybox', name='busybox', oid=NestedNamespace(createTS=1671882607095385155, hpid=106768), start='2022-12-24T11:50:07.095385155Z', thread=NestedNamespace(id=-1), tty=False)
+user	 NestedNamespace(group=NestedNamespace(id=0, name='<NA>'), id=0, name='<NA>')
+yes
+==========================
+objtype	 ObjectTypes.PROC_EVT
+1671882630294825932
+event	 NestedNamespace(action='process-exit', category='process', duration=0, end='2022-12-24T11:50:30.294825932Z', kind='event', opflags='exit ', opflags_int=4, sf_ret=0, sf_type='PE', start='2022-12-24T11:50:30.294825932Z', type='exit')
+host	 NestedNamespace(id='local', ip='127.0.0.1')
+container	 NestedNamespace(id='004e27b348ee', image=NestedNamespace(id='ff4607225864e20ec53174de8ac57410685aa45aed7a9837c057837bb97669c9', name='attack:latest'), name='attack', privileged=False, runtime='DOCKER')
+pod	 None
+file	 None
+file_action	 None
+network	 None
+source	 None
+destination	 None
+process	 NestedNamespace(args='', command_line='/bin/df ', executable='/bin/df', name='df', oid=NestedNamespace(createTS=1671882630293085511, hpid=107797), parent=NestedNamespace(args='./attack.sh', command_line='/bin/busybox ./attack.sh', executable='/bin/busybox', name='busybox', oid=NestedNamespace(createTS=1671882607095385155, hpid=106768), start='2022-12-24T11:50:07.095385155Z', thread=NestedNamespace(id=-1), tty=False), start='2022-12-24T11:50:30.293085511Z', thread=NestedNamespace(id=107797), tty=False)
+parent	 NestedNamespace(args='./attack.sh', command_line='/bin/busybox ./attack.sh', executable='/bin/busybox', name='busybox', oid=NestedNamespace(createTS=1671882607095385155, hpid=106768), start='2022-12-24T11:50:07.095385155Z', thread=NestedNamespace(id=-1), tty=False)
+user	 NestedNamespace(group=NestedNamespace(id=0, name='<NA>'), id=0, name='<NA>')
+yes
+yes
+yes
+yes
+yes
+yes
+yes
+yes
+yes
+yes
+yes
+yes
+yes
+yes
+yes
+yes
+yes
+yes
+yes
+yes
+yes
+yes
+yes
+yes
+yes
+yes
+yes
+yes
+yes
+yes
+yes
+yes
+yes
+yes
+yes
+yes
+yes
+yes
+yes
+yes
+yes
+yes
+yes
+yes
+yes
+yes
+yes
+yes
+yes
+yes
+yes
+yes
+yes
+yes
+yes
+yes
+yes
+yes
+yes
+yes
+yes
+yes
