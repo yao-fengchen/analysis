@@ -126,6 +126,7 @@ _fields = {  #   '<key>': (<columnn name>, <column width>, <description>, <query
     'pprocess.user': ('pprocess.user', 10, 'Parent Process user name', False),
     'pprocess.gid': ('pprocess.gid', 10, 'Parent Process group id', False),
     'pprocess.group': ('pprocess.group', 10, 'Parent Process group name', False),
+    'tags': ('Tags', 10, 'Enrichment tags', False),
 }
 
 
@@ -463,6 +464,7 @@ class SFFormatter(object):
         _flat_map['pprocess.user'] = pprocess.user if pprocess else None
         _flat_map['pprocess.gid'] = pprocess.gid if pprocess else None
         _flat_map['pprocess.group'] = pprocess.group if pprocess else None
+        _flat_map['tags'] = tags if tags else None
 
         if not self.allFields and fields:
             od = OrderedDict()
