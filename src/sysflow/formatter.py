@@ -76,6 +76,7 @@ _fields = {  #   '<key>': (<columnn name>, <column width>, <description>, <query
     'file.oid': ('file.oid', 16, 'File oid', False),
     'file.path': ('file.path', 10, 'File path', False),
     'file.type': ('file.type', 10, 'File type', False),
+    'file.newpath': ('file.type', 10, 'File newpath', False),
 
     'file_action.bytes_read': ('file_action.bytes_read', 10, 'File_Action bytes_read', False),
     'file_action.read_ops': ('file_action.read_ops', 10, 'File_Action read_ops', False),
@@ -412,8 +413,10 @@ class SFFormatter(object):
 
         _flat_map['file.directory'] = file.directory if file else ''
         _flat_map['file.name'] = file.name if file else ''
+        _flat_map['file.oid'] = file.oid if file else ''
         _flat_map['file.path'] = file.path if file else ''
         _flat_map['file.type'] = file.type if file else ''
+        _flat_map['file.newpath'] = file.newpath if file else ''
 
         _flat_map['file_action.bytes_read'] = file_action.bytes_read if file_action else None
         _flat_map['file_action.read_ops'] = file_action.read_ops if file_action else None

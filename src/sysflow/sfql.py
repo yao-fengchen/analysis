@@ -400,6 +400,7 @@ class SfqlMapper(Generic[T]):
         'file.oid': partial(_getFileAttr.__func__, attr="oid"),
         'file.path': partial(_getFileAttr.__func__, attr='path'),
         'file.type': partial(_getFileAttr.__func__, attr='type'),
+        'file.newpath': partial(_getFileAttr.__func__, attr='newpath'),
 
         'file_action.bytes_read': partial(_getFileActionAttr.__func__, attr='bytes_read'),
         'file_action.read_ops': partial(_getFileActionAttr.__func__, attr='read_ops'),
@@ -450,11 +451,6 @@ class SfqlMapper(Generic[T]):
         'pprocess.user': partial(_getProcessAttr.__func__, attr='user'),
         'pprocess.gid': partial(_getProcessAttr.__func__, attr='gid'),
         'pprocess.group': partial(_getProcessAttr.__func__, attr='group'),
-
-        'user.group.id': partial(_getUserAttr.__func__, attr='group.id'),
-        'user.group.name': partial(_getUserAttr.__func__, attr='group.name'),
-        'user.id': partial(_getUserAttr.__func__, attr='id'),
-        'user.name': partial(_getUserAttr.__func__, attr='name'),
     }
 
     def __init__(self):

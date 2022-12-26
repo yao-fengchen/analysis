@@ -23,6 +23,6 @@ cols=['ts_uts', 'endts_uts', 'type', 'opflags', 'proc.pid', 'proc.tid', 'pproc.p
 # g1.data()[cols].to_csv("result.csv", sep=",")
 
 ioc = 'process.name = wget'
-g2 = Graphlet('data/sysflow-events.log', ioc)
-g2.view(withoid=True, peek=True, peeksize=10, flows=True, ttps=False)
+g2 = Graphlet('data/sysflow-events.log', ioc, ['policies/ttps.yaml'])
+g2.view(withoid=True, peek=True, peeksize=10, flows=True, ttps=True)
 # g2.data()[cols].to_csv("result.csv", sep=",")
