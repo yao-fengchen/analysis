@@ -74,9 +74,15 @@ _fields = {  #   '<key>': (<columnn name>, <column width>, <description>, <query
     'file.directory': ('file.directory', 10, 'File directory', False),
     'file.name': ('file.name', 10, 'File name', False),
     'file.oid': ('file.oid', 16, 'File oid', False),
+    'file.newoid': ('file.newoid', 16, 'File newoid', False),
     'file.path': ('file.path', 10, 'File path', False),
     'file.type': ('file.type', 10, 'File type', False),
+    'file.typechar': ('file.typechar', 10, 'File typechar', False),
     'file.newpath': ('file.type', 10, 'File newpath', False),
+    'file.openflags': ('file.openflags', 10, 'File openflags', False),
+    'file.openflags_int': ('file.openflags_int', 10, 'File openflags_int', False),
+    'file.is_open_read': ('file.is_open_read', 10, 'File is_open_read', False),
+    'file.is_open_write': ('file.is_open_write', 10, 'File is_open_write', False),
 
     'file_action.bytes_read': ('file_action.bytes_read', 10, 'File_Action bytes_read', False),
     'file_action.read_ops': ('file_action.read_ops', 10, 'File_Action read_ops', False),
@@ -84,17 +90,18 @@ _fields = {  #   '<key>': (<columnn name>, <column width>, <description>, <query
     'file_action.write_ops': ('file_action.write_ops', 10, 'File_Action write_ops', False),
     'file_action.gap_time': ('file_action.gap_time', 10, 'File_Action gap_time', False),
 
-    'network.bytes': ('network.bytes', 10, 'Network bytes', False),
+    'network.rbytes': ('network.rytes', 10, 'Network read bytes', False),
+    'network.wbytes': ('network.wbytes', 10, 'Network write bytes', False),
     'network.community_id': ('network.community_id', 10, 'Network community_id', False),
     'network.protocol': ('network.protocol', 10, 'Network protocol', False),
+    'network.iana_number': ('network.iana_number', 10, 'Network iana_number', False),
+    'network.gap_time': ('network.gap_time', 10, 'Network gap_time', False),
 
-    'source.address': ('source.address', 10, 'Source address', False),
     'source.bytes': ('source.bytes', 10, 'Source bytes', False),
     'source.ip': ('source.ip', 10, 'Source ip', False),
     'source.packets': ('source.packets', 10, 'Source packets', False),
     'source.port': ('source.port', 10, 'Source port', False),
 
-    'destination.address': ('destination.address', 10, 'Destination address', False),
     'destination.bytes': ('destination.bytes', 10, 'Destination bytes', False),
     'destination.ip': ('destination.ip', 10, 'Destination ip', False),
     'destination.packets': ('destination.packets', 10, 'Destination packets', False),
@@ -414,9 +421,15 @@ class SFFormatter(object):
         _flat_map['file.directory'] = file.directory if file else ''
         _flat_map['file.name'] = file.name if file else ''
         _flat_map['file.oid'] = file.oid if file else ''
+        _flat_map['file.newoid'] = file.newoid if file else ''
         _flat_map['file.path'] = file.path if file else ''
         _flat_map['file.type'] = file.type if file else ''
+        _flat_map['file.typechar'] = file.type if file else None
         _flat_map['file.newpath'] = file.newpath if file else ''
+        _flat_map['file.openflags'] = file.openflags if file else ''
+        _flat_map['file.openflags_int'] = file.openflags_int if file else ''
+        _flat_map['file.is_open_read'] = file.is_open_read if file else None
+        _flat_map['file.is_open_write'] = file.is_open_write if file else None
 
         _flat_map['file_action.bytes_read'] = file_action.bytes_read if file_action else None
         _flat_map['file_action.read_ops'] = file_action.read_ops if file_action else None
@@ -424,17 +437,18 @@ class SFFormatter(object):
         _flat_map['file_action.write_ops'] = file_action.write_ops if file_action else None
         _flat_map['file_action.gap_time'] = file_action.gap_time if file_action else None
 
-        _flat_map['network.bytes'] = network.bytes if network else None
+        _flat_map['network.rbytes'] = network.rbytes if network else None
+        _flat_map['network.wbytes'] = network.wbytes if network else None
         _flat_map['network.community_id'] = network.community_id if network else ''
         _flat_map['network.protocol'] = network.protocol if network else ''
+        _flat_map['network.iana_number'] = network.iana_number if network else ''
+        _flat_map['network.gap_time'] = network.gap_time if network else None
 
-        _flat_map['source.address'] = source.address if source else ''
         _flat_map['source.bytes'] = source.bytes if source else None
         _flat_map['source.ip'] = source.ip if source else ''
         _flat_map['source.packets'] = source.packets if source else None
         _flat_map['source.port'] = source.port if source else None
 
-        _flat_map['destination.address'] = destination.address if destination else ''
         _flat_map['destination.bytes'] = destination.bytes if destination else None
         _flat_map['destination.ip'] = destination.ip if destination else ''
         _flat_map['destination.packets'] = destination.packets if destination else None

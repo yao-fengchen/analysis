@@ -1,6 +1,7 @@
 #!/usr/bin/env python3
 
 import logging
+import hashlib, json
 from sysflow.objtypes import ObjectTypes, OBJ_NAME_MAP
 from types import SimpleNamespace
 
@@ -29,13 +30,8 @@ class NestedNamespace(SimpleNamespace):
                     setattr(self, key, tuple(map(self.mapEntry, val)))
 
 
-def process(record):
-    record = NestedNamespace(eval(record))
-    rec = NestedNamespace()
-    
-
-
-    return rec
+def hashDeal(o):
+    return int(hashlib.md5(json.dumps(o).encode('utf-8')).hexdigest(), 16)
 
 
 class SFReader(object):
