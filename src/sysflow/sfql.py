@@ -311,6 +311,8 @@ class SfqlMapper(Generic[T]):
         file = t[6]
         if not file:
             return None
+        if attr == 'path' and file.type == 'dir':
+            return SfqlMapper._rgetattr(file, 'directory')
         return SfqlMapper._rgetattr(file, attr)
 
     @staticmethod
