@@ -342,11 +342,11 @@
      
 - macro: init_dir
   condition: >
-    (fd.directory in (init_directories))
+    (file.directory in (init_directories))
 
 - macro: scheduler_dir
   condition: >
-    (fd.directory in (scheduler_directories))
+    (file.directory in (scheduler_directories))
 
 - macro: known_root_conditions
   condition: (file.path startswith /root/orcexec.
@@ -398,18 +398,18 @@
   condition: rename or remove
 
 - macro: bin_dir
-  condition: (process.directory startswith /bin or 
-             process.directory startswith /sbin or
-             process.directory startswith /usr/bin or
-             process.directory startswith /usr/sbin or
-             process.directory startswith /usr/local/bin or
-             process.directory startswith /usr/local/sbin)
+  condition: (process.exe startswith /bin or 
+             process.exe startswith /sbin or
+             process.exe startswith /usr/bin or
+             process.exe startswith /usr/sbin or
+             process.exe startswith /usr/local/bin or
+             process.exe startswith /usr/local/sbin)
 
 - macro: etc_dir
   condition: file.path startswith /etc/
 
 - macro: root_dir
-  condition: (process.directory=/ or file.path startswith /root)
+  condition: (process.exe=/ or file.path startswith /root)
 
 - macro: sensitive_files
   condition: (file.path startswith /etc and
@@ -507,7 +507,7 @@
   condition: (process.name=nrpe and process.user=nagios)
 
 - macro: container
-  condition: (contai != host)
+  condition: (contaier.runtime != host)
 
 - macro: known_user_in_container
   condition: (container and process.user != "N/A")
@@ -540,7 +540,7 @@
   condition: process.exe in (auth_processes)
   
 - macro: entrypoint
-  condition: not pprocess.oid.hpidpid exists
+  condition: not pprocess.oid.hpid exists
 
 - macro: wl
   condition: process.exe in (/echo/echo)
@@ -549,8 +549,8 @@
   condition: pprocess.exe = /usr/bin/sudo
 
 - macro: ps_discovery_args
-  condition: (process.args contains 'e' and sf-process.args contains 'f') or 
-             (process.args contains 'a' and sf-process.args contains 'u' and sf-process.args contains 'x') 
+  condition: (process.args contains 'e' and process.args contains 'f') or 
+             (process.args contains 'a' and process.args contains 'u' and process.args contains 'x') 
 
 - macro: home_dir_arg
   condition: process.args contains '/home' or process.args contains '/home/'
@@ -738,7 +738,7 @@
   condition: >
     root_dir and open_write
     and not file.path in (known_root_files)
-    and not process.directory in (known_root_directories)
+    and not process.exe in (known_root_directories)
     and not known_root_conditions
   action: [tag]
   priority: high
@@ -960,7 +960,7 @@
   desc: Attempts to clear system logs to hide evidence of an intrusion
   condition: event.opflags = EXEC and (
              ( process.args pmatch (history_files) and clear_cmds) or
-             ( srf.proc.name = history and process.args = '-c'))
+             ( process.name = history and process.args = '-c'))
   action: [tag]
   priority: medium
   tags: [mitre:T1070.003]

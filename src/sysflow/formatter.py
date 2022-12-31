@@ -48,6 +48,7 @@ _fields = {  #   '<key>': (<columnn name>, <column width>, <description>, <query
     'event.category': ('event.category', 10, 'Event category', False),
     'event.kind': ('event.kind', 10, 'Event kind', False),
     'event.sf_ret': ('event.sf_ret', 10, 'Event sf_ret', False),
+    'event.sf_type': ('event.sf_type', 10, 'Event sf_type', False),
     'event.type': ('event.type', 10, 'Event type', False),
     'event.opflags': ('event.opflags', 10, 'Event opflags', False),
     'event.opflags_int': ('event.opflags_int', 10, 'Event opflags_int', False),
@@ -111,6 +112,8 @@ _fields = {  #   '<key>': (<columnn name>, <column width>, <description>, <query
     'process.command_line': ('process.command_line', 10, 'Process command_line', False),
     'process.exe': ('process.exe', 10, 'Process exe', False),
     'process.name': ('process.name', 10, 'Process name', False),
+    'process.oldexe': ('process.oldexe', 10, 'Process oldexe', False),
+    'process.oldname': ('process.oldname', 10, 'Process oldname', False),
     'process.aname': ('process.aname', 10, 'Process ancester name', False),
     'process.tid': ('process.tid', 10, 'Process thread id', False),
     'process.start': ('process.start', 10, 'Process start', False),
@@ -396,8 +399,8 @@ class SFFormatter(object):
         _flat_map['event.sf_ret'] = event.sf_ret if event and hasattr(event, "sf_ret") else None
         _flat_map['event.sf_type'] = event.sf_type if event else None
         _flat_map['event.type'] = event.type if event else ''
-        _flat_map['event.opflags'] = event.type if event else ''
-        _flat_map['event.opflags_int'] = event.type if event else ''
+        _flat_map['event.opflags'] = event.opflags if event else ''
+        _flat_map['event.opflags_int'] = event.opflags_int if event else ''
 
         _flat_map['host.id'] = host.id if host else ''
         _flat_map['host.ip'] = host.ip if host else ''
@@ -458,6 +461,8 @@ class SFFormatter(object):
         _flat_map['process.command_line'] = process.command_line if process else ''
         _flat_map['process.exe'] = process.exe if process else ''
         _flat_map['process.name'] = process.name if process else ''
+        _flat_map['process.oldexe'] = process.oldexe if process else ''
+        _flat_map['process.oldname'] = process.oldname if process else ''
         _flat_map['process.aname'] = process.aname if process else ''
         _flat_map['process.tid'] = process.tid if process else ''
         _flat_map['process.start'] = process.start if process else ''
