@@ -283,6 +283,8 @@ class SfqlMapper(Generic[T]):
         event = t[2]
         if not event:
             return None
+        if attr == 'opflags':
+            return ','.join(utils.getOpFlags(event.opflags_int))
         return SfqlMapper._rgetattr(event, attr)
 
     @staticmethod
@@ -313,6 +315,8 @@ class SfqlMapper(Generic[T]):
             return None
         if attr == 'path' and file.type == 'dir':
             return SfqlMapper._rgetattr(file, 'directory')
+        if attr == 'openflags':
+            return ','.join(utils.getOpenFlags(SfqlMapper._rgetattr(file, "openflags_int")))
         return SfqlMapper._rgetattr(file, attr)
 
     @staticmethod
@@ -450,18 +454,18 @@ class SfqlMapper(Generic[T]):
         'process.gid': partial(_getProcessAttr.__func__, attr='gid'),
         'process.group': partial(_getProcessAttr.__func__, attr='group'),
 
-        'pprocess.args': partial(_getProcessAttr.__func__, attr='args'),
-        'pprocess.command_line': partial(_getProcessAttr.__func__, attr='command_line'),
-        'pprocess.exe': partial(_getProcessAttr.__func__, attr='exe'),
-        'pprocess.name': partial(_getProcessAttr.__func__, attr='name'),
-        'pprocess.start': partial(_getProcessAttr.__func__, attr='start'),
-        'pprocess.tty': partial(_getProcessAttr.__func__, attr='tty'),
-        'pprocess.oid.hpid': partial(_getProcessAttr.__func__, attr='oid.hpid'),
-        'pprocess.oid.createTS': partial(_getProcessAttr.__func__, attr='oid.createTS'),
-        'pprocess.uid': partial(_getProcessAttr.__func__, attr='uid'),
-        'pprocess.user': partial(_getProcessAttr.__func__, attr='user'),
-        'pprocess.gid': partial(_getProcessAttr.__func__, attr='gid'),
-        'pprocess.group': partial(_getProcessAttr.__func__, attr='group'),
+        'pprocess.args': partial(_getParentAttr.__func__, attr='args'),
+        'pprocess.command_line': partial(_getParentAttr.__func__, attr='command_line'),
+        'pprocess.exe': partial(_getParentAttr.__func__, attr='exe'),
+        'pprocess.name': partial(_getParentAttr.__func__, attr='name'),
+        'pprocess.start': partial(_getParentAttr.__func__, attr='start'),
+        'pprocess.tty': partial(_getParentAttr.__func__, attr='tty'),
+        'pprocess.oid.hpid': partial(_getParentAttr.__func__, attr='oid.hpid'),
+        'pprocess.oid.createTS': partial(_getParentAttr.__func__, attr='oid.createTS'),
+        'pprocess.uid': partial(_getParentAttr.__func__, attr='uid'),
+        'pprocess.user': partial(_getParentAttr.__func__, attr='user'),
+        'pprocess.gid': partial(_getParentAttr.__func__, attr='gid'),
+        'pprocess.group': partial(_getParentAttr.__func__, attr='group'),
     }
 
     def __init__(self):

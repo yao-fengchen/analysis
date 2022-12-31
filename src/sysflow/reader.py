@@ -115,10 +115,11 @@ class FlattenedSFReader(SFReader):
 
             if hasattr(rec, "file"):
                 file = rec.file
-                # file["newname"] = None
-                # if rec.process.name in ["copy", "ln"]:
-                #     file["newname"] = rec.process.name.split()[-1]
-                # self.files.add(file)
+                fileOID = rec.file.oid
+                self.files[fileOID] = file
+                # newfileOID = file.newoid
+                # if newfileOID is not None:
+                #     if not
             head = rec.head if hasattr(rec, "head") else None
             event = rec.event if hasattr(rec, "event") else None
             host = rec.host if hasattr(rec, "host") else None

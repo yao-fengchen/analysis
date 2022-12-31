@@ -480,7 +480,9 @@ class Graphlet(object):
         graph_attr = {'splines': 'true', 'overlap': 'scale', 'rankdir': 'TD'}
         node_attr = {'shape': 'Mrecord', 'fontsize': '9'}
         edge_attr = {'fontsize': '8'}
-        g = Digraph('graphlet', directory='/tmp/.sf/', node_attr=node_attr, edge_attr=edge_attr, graph_attr=graph_attr)
+        base_path = os.path.abspath(__file__)
+        result_path = os.path.join(os.path.dirname(os.path.dirname(os.path.dirname(base_path))), 'result')
+        g = Digraph('graphlet', directory= result_path, node_attr=node_attr, edge_attr=edge_attr, graph_attr=graph_attr)
         for k, v in self.nodes.items():
             if flows and (isinstance(v, FileFlowNode) or isinstance(v, NetFlowNode)) and len(v.df()) > 0:
                 if ttps and v.score() > 0:

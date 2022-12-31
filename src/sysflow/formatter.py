@@ -384,6 +384,7 @@ class SFFormatter(object):
         _flat_map['type'] = OBJECT_MAP.get(objtype, '?')
         if object in [ObjectTypes.FILE_FLOW, ObjectTypes.FILE_EVT]:
             _flat_map['res'] = file.path if file else ''
+            _flat_map['res'] += ', ' + file.newpath if file and file.newpath != '' else ''
         elif objtype in [ObjectTypes.NET_FLOW]:
             _flat_map['res'] = source.ip + ":" + str(source.port) + "-" + destination.ip + ":" + str(destination.port)
         else:
@@ -396,11 +397,11 @@ class SFFormatter(object):
         _flat_map['event.actoin'] = event.action if event else ''
         _flat_map['event.category'] = event.category if event else ''
         _flat_map['event.kind'] = event.kind if event else ''
-        _flat_map['event.sf_ret'] = event.sf_ret if event and hasattr(event, "sf_ret") else None
-        _flat_map['event.sf_type'] = event.sf_type if event else None
+        _flat_map['event.sf_ret'] = int(event.sf_ret) if event and hasattr(event, "sf_ret") else None
+        _flat_map['event.sf_type'] = event.sf_type if event else ''
         _flat_map['event.type'] = event.type if event else ''
-        _flat_map['event.opflags'] = event.opflags if event else ''
-        _flat_map['event.opflags_int'] = event.opflags_int if event else ''
+        _flat_map['event.opflags'] = utils.getOpFlagsStr(event.opflags_int) if event else ''
+        _flat_map['event.opflags_int'] = int(event.opflags_int) if event else None
 
         _flat_map['host.id'] = host.id if host else ''
         _flat_map['host.ip'] = host.ip if host else ''
@@ -419,7 +420,7 @@ class SFFormatter(object):
         _flat_map['pod.nodename'] = pod.nodename if pod else ''
         _flat_map['pod.hostip'] = pod.hostip if pod else ''
         _flat_map['pod.internalip'] = pod.internalip if pod else ''
-        _flat_map['pod.restartcnt'] = pod.restartcnt if pod else None
+        _flat_map['pod.restartcnt'] = int(pod.restartcnt) if pod else None
 
         _flat_map['file.directory'] = file.directory if file else ''
         _flat_map['file.name'] = file.name if file else ''
@@ -427,35 +428,35 @@ class SFFormatter(object):
         _flat_map['file.newoid'] = file.newoid if file else ''
         _flat_map['file.path'] = file.path if file else ''
         _flat_map['file.type'] = file.type if file else ''
-        _flat_map['file.typechar'] = file.type if file else None
+        _flat_map['file.typechar'] = file.type if file else ''
         _flat_map['file.newpath'] = file.newpath if file else ''
         _flat_map['file.openflags'] = file.openflags if file else ''
         _flat_map['file.openflags_int'] = file.openflags_int if file else ''
-        _flat_map['file.is_open_read'] = file.is_open_read if file else None
-        _flat_map['file.is_open_write'] = file.is_open_write if file else None
+        _flat_map['file.is_open_read'] = file.is_open_read if file else ''
+        _flat_map['file.is_open_write'] = file.is_open_write if file else ''
 
-        _flat_map['file_action.bytes_read'] = file_action.bytes_read if file_action else None
-        _flat_map['file_action.read_ops'] = file_action.read_ops if file_action else None
-        _flat_map['file_action.bytes_written'] = file_action.bytes_written if file_action else None
-        _flat_map['file_action.write_ops'] = file_action.write_ops if file_action else None
-        _flat_map['file_action.gap_time'] = file_action.gap_time if file_action else None
+        _flat_map['file_action.bytes_read'] = int(file_action.bytes_read) if file_action else None
+        _flat_map['file_action.read_ops'] = int(file_action.read_ops) if file_action else None
+        _flat_map['file_action.bytes_written'] = int(file_action.bytes_written) if file_action else None
+        _flat_map['file_action.write_ops'] = int(file_action.write_ops) if file_action else None
+        _flat_map['file_action.gap_time'] = int(file_action.gap_time) if file_action else None
 
-        _flat_map['network.rbytes'] = network.rbytes if network else None
-        _flat_map['network.wbytes'] = network.wbytes if network else None
+        _flat_map['network.rbytes'] = int(network.rbytes) if network else None
+        _flat_map['network.wbytes'] = int(network.wbytes) if network else None
         _flat_map['network.community_id'] = network.community_id if network else ''
         _flat_map['network.protocol'] = network.protocol if network else ''
-        _flat_map['network.iana_number'] = network.iana_number if network else ''
-        _flat_map['network.gap_time'] = network.gap_time if network else None
+        _flat_map['network.iana_number'] = int(network.iana_number) if network else None
+        _flat_map['network.gap_time'] = int(network.gap_time) if network else None
 
-        _flat_map['source.bytes'] = source.bytes if source else None
+        _flat_map['source.bytes'] = int(source.bytes) if source else None
         _flat_map['source.ip'] = source.ip if source else ''
-        _flat_map['source.packets'] = source.packets if source else None
-        _flat_map['source.port'] = source.port if source else None
+        _flat_map['source.packets'] = int(source.packets) if source else None
+        _flat_map['source.port'] = int(source.port) if source else None
 
-        _flat_map['destination.bytes'] = destination.bytes if destination else None
+        _flat_map['destination.bytes'] = int(destination.bytes) if destination else None
         _flat_map['destination.ip'] = destination.ip if destination else ''
-        _flat_map['destination.packets'] = destination.packets if destination else None
-        _flat_map['destination.port'] = destination.port if destination else None       
+        _flat_map['destination.packets'] = int(destination.packets) if destination else None
+        _flat_map['destination.port'] = int(destination.port) if destination else None       
 
         _flat_map['process.args'] = process.args if process else ''
         _flat_map['process.command_line'] = process.command_line if process else ''
@@ -464,29 +465,29 @@ class SFFormatter(object):
         _flat_map['process.oldexe'] = process.oldexe if process else ''
         _flat_map['process.oldname'] = process.oldname if process else ''
         _flat_map['process.aname'] = process.aname if process else ''
-        _flat_map['process.tid'] = process.tid if process else ''
+        _flat_map['process.tid'] = int(process.tid) if process else ''
         _flat_map['process.start'] = process.start if process else ''
-        _flat_map['process.tty'] = process.tty if process else None
-        _flat_map['process.oid.hpid'] = process.oid.hpid if process else None
-        _flat_map['process.oid.createTS'] = process.oid.createTS if process else None
-        _flat_map['process.uid'] = process.uid if process else None
-        _flat_map['process.user'] = process.user if process else None
-        _flat_map['process.gid'] = process.gid if process else None
-        _flat_map['process.group'] = process.group if process else None
+        _flat_map['process.tty'] = process.tty if process else ''
+        _flat_map['process.oid.hpid'] = int(process.oid.hpid) if process else None
+        _flat_map['process.oid.createTS'] = int(process.oid.createTS) if process else None
+        _flat_map['process.uid'] = int(process.uid) if process else None
+        _flat_map['process.user'] = process.user if process else ''
+        _flat_map['process.gid'] = int(process.gid) if process else None
+        _flat_map['process.group'] = process.group if process else ''
 
         _flat_map['pprocess.args'] = pprocess.args if pprocess else ''
         _flat_map['pprocess.command_line'] = pprocess.command_line if pprocess else ''
         _flat_map['pprocess.exe'] = pprocess.exe if pprocess else ''
         _flat_map['pprocess.name'] = pprocess.name if pprocess else ''
         _flat_map['pprocess.start'] = pprocess.start if pprocess else ''
-        _flat_map['pprocess.tty'] = pprocess.tty if pprocess else None
-        _flat_map['pprocess.oid.hpid'] = pprocess.oid.hpid if pprocess else None
-        _flat_map['pprocess.oid.createTS'] = pprocess.oid.createTS if pprocess else None
-        _flat_map['pprocess.uid'] = pprocess.uid if pprocess else None
-        _flat_map['pprocess.user'] = pprocess.user if pprocess else None
-        _flat_map['pprocess.gid'] = pprocess.gid if pprocess else None
-        _flat_map['pprocess.group'] = pprocess.group if pprocess else None
-        _flat_map['tags'] = tags if tags else None
+        _flat_map['pprocess.tty'] = pprocess.tty if pprocess else ''
+        _flat_map['pprocess.oid.hpid'] = int(pprocess.oid.hpid) if pprocess else None
+        _flat_map['pprocess.oid.createTS'] = int(pprocess.oid.createTS) if pprocess else None
+        _flat_map['pprocess.uid'] = int(pprocess.uid) if pprocess else None
+        _flat_map['pprocess.user'] = pprocess.user if pprocess else ''
+        _flat_map['pprocess.gid'] = int(pprocess.gid) if pprocess else None
+        _flat_map['pprocess.group'] = pprocess.group if pprocess else ''
+        _flat_map['tags'] = tags if tags else ()
 
         if not self.allFields and fields:
             od = OrderedDict()
