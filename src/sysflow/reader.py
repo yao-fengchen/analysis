@@ -123,7 +123,7 @@ class FlattenedSFReader(SFReader):
             head = rec.head if hasattr(rec, "head") else None
             event = rec.event if hasattr(rec, "event") else None
             host = rec.host if hasattr(rec, "host") else None
-            file_action = rec.sf_file_action if hasattr(rec, "sf_file_action") else None
+            file_action = rec.file_action if hasattr(rec, "file_action") else None
             network = rec.network if hasattr(rec, "network") else None
             source = rec.source if hasattr(rec, "source") else None
             destination = rec.destination if hasattr(rec, "destination") else None

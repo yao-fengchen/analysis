@@ -893,10 +893,10 @@ class FileFlowNode(Node):
         oidnode = 'FF|{{{0}|{{{1}|{2}, {3}, {4}, {5}}}{6}}}'
         peekoidnode = 'FF|{{{0}|{{{1}|{2}, {3}, {4}, {5}}}|{{{6}}}{7}}}'
         flowstats = self.df()[['file_action.bytes_read', 'file_action.bytes_written', 'file_action.read_ops', 'file_action.write_ops']].sum(axis=0, skipna=True)
-        rb = flowstats['file_action.bytes_read']
-        rop = flowstats['file_action.read_ops']
-        wb = flowstats['file_action.bytes_written']
-        wop = flowstats['file_action.write_ops']
+        rb = int(flowstats['file_action.bytes_read'])
+        rop = int(flowstats['file_action.read_ops'])
+        wb = int(flowstats['file_action.bytes_written'])
+        wop = int(flowstats['file_action.write_ops'])
         ufiles = len(self.df()['file.path'].unique())
         res = self.df()[['res', 'head.ts']].groupby(['res']).count()[['head.ts']].rename(columns={'head.ts': 'count'})
         reslist = res.index.tolist()
@@ -960,13 +960,13 @@ class NetFlowNode(Node):
             data[idx] = r.values()
         df = pd.DataFrame.from_dict(data, orient='index', columns=r.keys() if r else None)
         # return df
-        return df[((df['file_action.read_ops'] > 0) | (df['file_action.write_ops'] > 0))]
+        return df[((df['destination.packets'] > 0) | (df['source.packets'] > 0))]
 
     def plot(self):
         df = self.df()
         flows = df[(df.type.isin(['NF']))]
-        ax = flows[['head.ts', 'file_action.bytes_read', 'file_action.bytes_written']].plot.bar(
-            x='head.ts', y=['file_action.bytes_read', 'file_action.bytes_written'], rot=45, figsize=(20, 5)
+        ax = flows[['head.ts', 'network.rbytes', 'network.wbytes']].plot.bar(
+            x='head.ts', y=['network.rbytes', 'network.wbytes'], rot=45, figsize=(20, 5)
         )
         ax.xaxis.set_major_locator(mdates.AutoDateLocator())
         plt.gcf().autofmt_xdate()
@@ -996,11 +996,11 @@ class NetFlowNode(Node):
         peeknode = 'NF|{{{{{0}|{1}|{2}}}|{{{3}, {4}, {5}, {6}}}|{{{7}}}{8}}}'
         oidnode = 'NF|{{{0}|{{{1}|{2}|{3}}}|{{{4}, {5}, {6}, {7}}}{8}}}'
         peekoidnode = 'NF|{{{0}|{{{1}|{2}|{3}}}|{{{4}, {5}, {6}, {7}}}|{{{8}}}{9}}}'
-        flowstats = self.df()[['file_action.bytes_read', 'file_action.bytes_written', 'file_action.read_ops', 'file_action.write_ops']].sum(axis=0, skipna=True)
-        rb = flowstats['file_action.bytes_read']
-        rop = flowstats['file_action.read_ops']
-        wb = flowstats['file_action.bytes_written']
-        wop = flowstats['file_action.write_ops']
+        flowstats = self.df()[['network.rbytes', 'network.wbytes', 'destination.packets', 'source.packets']].sum(axis=0, skipna=True)
+        rb = int(flowstats['network.rbytes'])
+        rop = int(flowstats['destination.packets'])
+        wb = int(flowstats['network.wbytes'])
+        wop = int(flowstats['source.packets'])
         uips = len(pd.unique(self.df()[['net.sip', 'net.dip']].values.ravel('K')))
         uports = len(pd.unique(self.df()[['net.sport', 'net.dport']].values.ravel('K')))
         uprotos = self.df()['net.proto'].unique()
