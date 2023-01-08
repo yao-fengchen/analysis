@@ -123,21 +123,6 @@ class Graphlet(object):
 
     def __create(self, expr=None):
         for objtype, head, event, host, container, pod, file, file_action, network, source, destination, process, pprocess in self.sfqlint.filter(self.reader, expr):
-            print("==========================")
-            print("objtype\t",objtype)
-            print("head\t", head)
-            print("event\t", event)
-            print("host\t", host)
-            print("container\t", container)
-            print("pod\t", pod)
-            print("file\t", file)
-            print("file_action\t", file_action)
-            print("network\t", network)
-            print("source\t", source)
-            print("destination\t", destination)
-            print("process\t", process)
-            print("pprocess\t", pprocess)
-
             tags = self.sfqlint.enrich((objtype, head, event, host, container, pod, file, file_action, network, source, destination, process, pprocess))
 
             if objtype == ObjectTypes.PROC_EVT:

@@ -50,8 +50,8 @@ def search(index):
 
 
 if __name__ == "__main__":
-    index = "sysflow-events"
-    outputDir = "sysflow-events"
+    index = "events"
+    outputDir = "events"
     os.system("mkdir -p %s" % outputDir)
 
     t1 = time.time()

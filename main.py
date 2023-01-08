@@ -13,6 +13,6 @@ pd.set_option('max_colwidth', None)
 
 cols=['head.ts', 'head.endts', 'head.type', 'event.opflags', 'process.oid.hpid', 'process.tid', 'pprocess.oid.hpid', 'process.exe', 'pprocess.exe','container.name', 'tags']
 ioc = 'process.name = cp and container.name = attack'
-graph = Graphlet('data/sysflow-events.log', ioc, ['src/policies/ttps.yaml'])
+graph = Graphlet('data/events.log', ioc, ['src/policies/ttps.yaml'])
 graph.view(withoid=True, peek=True, peeksize=10, flows=True, ttps=True)
 graph.data()[cols].to_csv("result/result.csv", sep=",")
