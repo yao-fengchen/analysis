@@ -1,6 +1,12 @@
-,head.ts,head.endts,head.type,event.opflags,process.oid.hpid,process.tid,pprocess.oid.hpid,process.exe,pprocess.exe,container.name,tags
-0,1672381511917358146,0,PE,EXEC,2186328,2186328,2180881,/usr/bin/cp,/usr/bin/dash,attack,"(['Suspiciousprocessspawned'], {'mitre:T1574', 'mitre:T1106'}, 1)"
-1,1672381511919425253,1672381511920110212,FF,O   R   C  ,2186328,2186328,2180881,/usr/bin/cp,/usr/bin/dash,attack,()
-2,1672381511919807966,1672381511920097826,FF,O  W    C  ,2186328,2186328,2180881,/usr/bin/cp,/usr/bin/dash,attack,()
-3,1672381511920180711,1672381511920180711,FF,        C  ,2186328,2186328,2180881,/usr/bin/cp,/usr/bin/dash,attack,()
-4,1672381511920400572,0,PE,EXIT,2186328,2186328,2180881,/usr/bin/cp,/usr/bin/dash,attack,()
+,head.ts,head.endts,head.type,event.opflags,process.oid.hpid,pprocess.oid.hpid,process.exe,pprocess.exe,container.name
+0,1676471804437229406,0,PE,EXEC,124732,124731,/usr/bin/lsblk,/bin/sh,attackanalyze
+1,1676471804441325859,1676471804441325859,FF,        C  ,124732,124731,/usr/bin/lsblk,/bin/sh,attackanalyze
+2,1676471804441419604,1676471804441419604,FF,        C  ,124732,124731,/usr/bin/lsblk,/bin/sh,attackanalyze
+3,1676471804441503268,1676471804441503268,FF,        C  ,124732,124731,/usr/bin/lsblk,/bin/sh,attackanalyze
+4,1676471804441582213,1676471804441582213,FF,        C  ,124732,124731,/usr/bin/lsblk,/bin/sh,attackanalyze
+5,1676471804441597810,1676471804441597810,FF,        C  ,124732,124731,/usr/bin/lsblk,/bin/sh,attackanalyze
+6,1676471804441668860,1676471804441668860,FF,        C  ,124732,124731,/usr/bin/lsblk,/bin/sh,attackanalyze
+7,1676471804441689853,1676471804441689853,FF,        C  ,124732,124731,/usr/bin/lsblk,/bin/sh,attackanalyze
+8,1676471804442267742,1676471804464771000,FF,   W     T ,124732,124731,/usr/bin/lsblk,/bin/sh,attackanalyze
+9,1676471804442270902,1676471804442270902,FF,        C  ,124732,124731,/usr/bin/lsblk,/bin/sh,attackanalyze
+10,1676471804442390460,0,PE,EXIT,124732,124731,/usr/bin/lsblk,/bin/sh,attackanalyze

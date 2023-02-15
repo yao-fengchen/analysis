@@ -32,7 +32,7 @@ def getResult(esResult, index):
             f.write(str(item['_source'])+'\n')
 
 
-def getSearchResult(esSearchOptions, scroll='5m', index='sysflow-events', timeout="1m"):
+def getSearchResult(esSearchOptions, scroll='5m', index='events', timeout="1m"):
     esResult = helpers.scan(
         client=client,
         query=esSearchOptions,
