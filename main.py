@@ -5,7 +5,7 @@ import warnings
 import pandas as pd
 import numpy as np
 import os
-os.system("python data/getenvets.py")
+os.system("python data/getevents.py")
 
 warnings.filterwarnings("ignore")
 pd.set_option('display.max_rows', None)
