@@ -870,7 +870,7 @@
     attempt to get detailed information about the operating system and hardware,
     including version, patches, hotfixes, service packs, and architecture
   condition: event.opflags = EXEC and
-             process.name in (system_discovery_cmds)
+             (process.name in (system_discovery_cmds) or process.oldname in (system_discovery_cmds))
   action: [tag]
   priority: high
   tags: [mitre:T1082]

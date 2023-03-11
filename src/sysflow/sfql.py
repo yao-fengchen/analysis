@@ -361,12 +361,6 @@ class SfqlMapper(Generic[T]):
             return None
         return SfqlMapper._rgetattr(parent, attr)   
 
-    @staticmethod
-    def _getUserAttr(t: T, attr: str):
-        user = t[13]
-        if not user:
-            return None
-        return SfqlMapper._rgetattr(user, attr)   
 
     _mapper = {
         'head.ts': partial(_getHeadAttr.__func__, attr='ts'),

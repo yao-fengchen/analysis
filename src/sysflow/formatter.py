@@ -382,13 +382,13 @@ class SFFormatter(object):
     def _flatten(self, objtype, head, event, host, container, pod, file, file_action, network, source, destination, process, pprocess, fields, tags=None):
         _flat_map = OrderedDict()
         _flat_map['type'] = OBJECT_MAP.get(objtype, '?')
-        if object in [ObjectTypes.FILE_FLOW, ObjectTypes.FILE_EVT]:
-            _flat_map['res'] = file.path if file else ''
-            _flat_map['res'] += ', ' + file.newpath if file and file.newpath != '' else ''
+        if objtype in [ObjectTypes.FILE_FLOW, ObjectTypes.FILE_EVT]:
+            _flat_map['res'] = file.path if file and file.path else ''
+            _flat_map['res'] += ', ' + file.newpath if file and file.newpath else ''
         elif objtype in [ObjectTypes.NET_FLOW]:
             _flat_map['res'] = source.ip + ":" + str(source.port) + "-" + destination.ip + ":" + str(destination.port)
         else:
-            _flat_map['res'] = ''
+            _flat_map['res'] = 'None'
 
         _flat_map['head.ts'] = head.ts if head else ''
         _flat_map['head.endts'] = head.endts if head else ''

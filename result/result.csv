@@ -1,12 +1,14 @@
-,head.ts,head.endts,head.type,event.opflags,process.oid.hpid,pprocess.oid.hpid,process.exe,pprocess.exe,container.name
-0,1676471804437229406,0,PE,EXEC,124732,124731,/usr/bin/lsblk,/bin/sh,attackanalyze
-1,1676471804441325859,1676471804441325859,FF,        C  ,124732,124731,/usr/bin/lsblk,/bin/sh,attackanalyze
-2,1676471804441419604,1676471804441419604,FF,        C  ,124732,124731,/usr/bin/lsblk,/bin/sh,attackanalyze
-3,1676471804441503268,1676471804441503268,FF,        C  ,124732,124731,/usr/bin/lsblk,/bin/sh,attackanalyze
-4,1676471804441582213,1676471804441582213,FF,        C  ,124732,124731,/usr/bin/lsblk,/bin/sh,attackanalyze
-5,1676471804441597810,1676471804441597810,FF,        C  ,124732,124731,/usr/bin/lsblk,/bin/sh,attackanalyze
-6,1676471804441668860,1676471804441668860,FF,        C  ,124732,124731,/usr/bin/lsblk,/bin/sh,attackanalyze
-7,1676471804441689853,1676471804441689853,FF,        C  ,124732,124731,/usr/bin/lsblk,/bin/sh,attackanalyze
-8,1676471804442267742,1676471804464771000,FF,   W     T ,124732,124731,/usr/bin/lsblk,/bin/sh,attackanalyze
-9,1676471804442270902,1676471804442270902,FF,        C  ,124732,124731,/usr/bin/lsblk,/bin/sh,attackanalyze
-10,1676471804442390460,0,PE,EXIT,124732,124731,/usr/bin/lsblk,/bin/sh,attackanalyze
+,head.ts,head.endts,head.type,file_action.bytes_read,file_action.bytes_written,file_action.read_ops,file_action.write_ops,event.opflags,process.oid.hpid,pprocess.oid.hpid,process.exe,pprocess.exe,container.name
+0,1677845149155955853,0,FE,,,,,SYMLINK,43320,42158,/usr/bin/ln,/usr/bin/dash,attack
+1,1677845149155955853,0,FE,,,,,SYMLINK,43320,42158,/usr/bin/ln,/usr/bin/dash,attack
+2,1677845151162198593,0,PE,,,,,EXEC,43327,42158,/app/testdir/mylsblk,/usr/bin/dash,attack
+3,1677845151174054022,1677845151174054022,FF,,,,,        C  ,43327,42158,/app/testdir/mylsblk,/usr/bin/dash,attack
+4,1677845151174487230,1677845151174487230,FF,,,,,        C  ,43327,42158,/app/testdir/mylsblk,/usr/bin/dash,attack
+5,1677845151174699546,1677845151174699546,FF,,,,,        C  ,43327,42158,/app/testdir/mylsblk,/usr/bin/dash,attack
+6,1677845151174887655,1677845151174887655,FF,,,,,        C  ,43327,42158,/app/testdir/mylsblk,/usr/bin/dash,attack
+7,1677845151174929775,1677845151174929775,FF,,,,,        C  ,43327,42158,/app/testdir/mylsblk,/usr/bin/dash,attack
+8,1677845151175172641,1677845151175172641,FF,,,,,        C  ,43327,42158,/app/testdir/mylsblk,/usr/bin/dash,attack
+9,1677845151175229956,1677845151175229956,FF,,,,,        C  ,43327,42158,/app/testdir/mylsblk,/usr/bin/dash,attack
+10,1677845151176641016,1677845151186069000,FF,0.0,640.0,0.0,2.0,   W     T ,43327,42158,/app/testdir/mylsblk,/usr/bin/dash,attack
+11,1677845151176649354,1677845151176649354,FF,,,,,        C  ,43327,42158,/app/testdir/mylsblk,/usr/bin/dash,attack
+12,1677845151176919280,0,PE,,,,,EXIT,43327,42158,/app/testdir/mylsblk,/usr/bin/dash,attack

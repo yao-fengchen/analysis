@@ -7,7 +7,7 @@ from collections import OrderedDict
 import sysflow.utils as utils
 import sysflow.opflags as opflags
 from sysflow.formatter import _fields, SFFormatter
-from sysflow.objtypes import ObjectTypes, OBJECT_MAP
+from sysflow.objtypes import ObjectTypes, OBJECT_MAP, OBJ_NAME_MAP
 from sysflow.reader import FlattenedSFReader
 from sysflow.sfql import SfqlInterpreter
 from graphviz import Digraph
@@ -144,6 +144,35 @@ class Graphlet(object):
                 )
                 if opflag == utils.getOpFlagsStr(opflags.OP_EXEC):
                     self.__addProcEvtEdge(opflag, process, pprocess, r, filt)
+                    if process.oldexe and process.oldname:
+                        fileKey = self.reader.getFileKey(container.id, process.oldexe)
+                        if fileKey in self.reader.files:
+                            nrec = self.reader.files[fileKey]
+
+                            nhead = nrec.head if hasattr(nrec, "head") else None
+                            nevent = nrec.event if hasattr(nrec, "event") else None
+                            nhost = nrec.host if hasattr(nrec, "host") else None
+                            ncontainer = nrec.container if hasattr(nrec, "container") else None
+                            npod = nrec.pod if hasattr(nrec, "pod") else None
+
+                            nfile_action = nrec.file_action if hasattr(nrec, "file_action") else None
+                            nnetwork = nrec.network if hasattr(nrec, "network") else None
+                            nsource = nrec.source if hasattr(nrec, "source") else None
+                            ndestination = nrec.destination if hasattr(nrec, "destination") else None
+                            nprocess = nrec.process if hasattr(nrec, "process") else None                 
+                            npprocess = nrec.pprocess if hasattr(nrec, "pprocess") else None 
+                            
+                            nobjtype = OBJ_NAME_MAP[nhead.type]
+                            nfile = nrec.file if hasattr(nrec, "file") else None
+
+                            nr = self.fmt._flatten(nobjtype, nhead, nevent, nhost, ncontainer, npod, nfile, nfile_action, nnetwork, nsource, ndestination, nprocess, npprocess, None, tags=tags)
+                            opflag = utils.getOpFlagsStr(nrec.event.opflags_int)
+                            nfilt = lambda v: (v.exe, v.args) == (nprocess.exe, nprocess.args) and v.hasProc(
+                                nprocess.oid.hpid, nprocess.oid.createTS
+                            )
+                            self.__addFileEvtEdge(opflag, nprocess, npprocess, nr, nfilt)
+                            self.__addProcEvtEdge(opflag, nprocess, npprocess, nr, filt)
+                            # self.__addTSEdge(nprocess, npprocess, nfile, filt)                            
 
                 filt = lambda v: (v.exe, v.args) == (process.exe, process.args) and v.hasProc(
                     process.oid.hpid, process.oid.createTS
@@ -165,6 +194,45 @@ class Graphlet(object):
                 r = self.fmt._flatten(objtype, head, event, host, container, pod, file, file_action, network, source, destination, process, pprocess, None, tags=tags)
                 self.__addNetFlowEdge(process, pprocess, r, filt)
 
+            if objtype == ObjectTypes.FILE_EVT:
+                filt = lambda v: (v.exe, v.args) == (process.exe, process.args) and v.hasProc(
+                    process.oid.hpid, process.oid.createTS
+                )
+                r = self.fmt._flatten(objtype, head, event, host, container, pod, file, file_action, network, source, destination, process, pprocess, None, tags=tags)
+                opflag = utils.getOpFlagsStr(event.opflags_int)
+                self.__addFileEvtEdge(opflag, process, pprocess, r, filt)
+
+
+    def __addFileEvtEdge(self, opflag, process, pprocess, r, filt):
+        if pprocess:
+            n1_k = _hash((process.exe, process.args, OBJECT_MAP[ObjectTypes.FILE_EVT], pprocess.exe, pprocess.args))
+        else:
+            n1_k = _hash((process.exe, process.args, OBJECT_MAP[ObjectTypes.FILE_EVT]))
+        new = False
+        if n1_k in self.nodes:
+            n1_v = self.nodes[n1_k]
+        else:
+            n1_v = FileEvtNode(n1_k, process.exe, process.args)
+            new = True
+        n1_v.addEvt(r)
+        self.nodes[n1_k] = n1_v
+        if new:
+            n2_k, n2_v = self.__findNode(filt)
+            if not n2_k:
+                key = self.reader.getProcessKey(pprocess.oid) if pprocess.oid else None
+                if key in self.reader.processes:
+                    pp = self.reader.processes[key]
+                    n2_k = _hash((process.exe, process.args, pp.exe, pp.args))
+                else:
+                    n2_k = _hash((process.exe, process.args))
+                n2_v = ProcessNode(
+                    n2_k, process.exe, process.args, process.uid, process.user, process.gid, process.group, process.tty
+                )
+                n2_v.addProc(process.oid.hpid, process.oid.createTS, None)
+                self.nodes[n2_k] = n2_v
+            self.edges.add(EvtEdge(n2_k, n1_k, OBJECT_MAP[ObjectTypes.FILE_EVT]))
+
+
     def __addProcEvtEdge(self, opflag, process, pprocess, r, filt):
         n1_k = _hash((process.exe, process.args, pprocess.exe, pprocess.args))
         if n1_k in self.nodes:
@@ -173,9 +241,9 @@ class Graphlet(object):
             n1_v = ProcessNode(
                 n1_k, process.exe, process.args, process.uid, process.user, process.gid, process.group, process.tty
             )
+        
         n1_v.addProc(process.oid.hpid, process.oid.createTS, r)
         self.nodes[n1_k] = n1_v
-
         if opflag == utils.getOpFlagsStr(opflags.OP_EXEC):
             p = pprocess
             n2_k, n2_v = self.__findNode(filt)
@@ -185,6 +253,9 @@ class Graphlet(object):
         if opflag == utils.getOpFlagsStr(opflags.OP_EXIT):
             p = process
             n2_k, n2_v = self.__findNode(filt)
+        else:
+            p = pprocess
+            n2_k, n2_v = self.__findNode(filt)            
 
         if not n2_k:
             key = self.reader.getProcessKey(pprocess.oid) if pprocess else None
@@ -358,7 +429,8 @@ class Graphlet(object):
             if not oid or oid == r.oid:
                 df = pd.concat([df, r.df()])
         df.reindex()
-        df.sort_values(by=['head.ts'], inplace=True, ignore_index=True)
+        if not df.empty:
+            df.sort_values(by=['head.ts'], inplace=True, ignore_index=True)
         return df
 
     def tags(self, oid=None):
@@ -482,6 +554,18 @@ class Graphlet(object):
                 else:
                     g.node(str(k), v.dot(withoid, peek, peeksize, ttps), style='bold')
             if isinstance(v, ProcessNode):
+                if ttps and v.score() > 0:
+                    g.node(
+                        str(k),
+                        v.dot(withoid, peek, peeksize, ttps),
+                        style='filled',
+                        color='red',
+                        fontcolor='red',
+                        fillcolor='#ff000010',
+                    )
+                else:
+                    g.node(str(k), v.dot(withoid, peek, peeksize, ttps))
+            if isinstance(v, FileEvtNode):
                 if ttps and v.score() > 0:
                     g.node(
                         str(k),
@@ -723,9 +807,9 @@ class ProcessNode(Node):
         self.exe = exe
         self.args = args
         self.uid = uid
-        self.user = user
+        self.user = user if user != '<NA>' else 'root'
         self.gid = gid
-        self.group = group
+        self.group = group if group != '<NA>' else 'root'
         self.tty = tty
         self.procs = set()
         self.data = list()
@@ -806,6 +890,94 @@ class ProcessNode(Node):
         return str(self.__key())
 
 
+class FileEvtNode(Node):
+    def __init__(self, oid, exe, args, file=None):
+        super().__init__(oid)
+        self.type = 'FE'
+        self.exe = exe
+        self.args = args
+        self.data = list()
+        self.file = file
+
+    def addEvt(self, r):
+        self.data.append(r)
+
+    def hasProc(self, pid, createTS):
+        return True
+
+    def df(self):
+        data = OrderedDict()
+        for idx, r in enumerate(self.data):
+            data[idx] = r.values()
+        df = pd.DataFrame.from_dict(data, orient='index', columns=r.keys() if r else None)
+        return df[(df['file.path'] != '')]
+
+    def interval(self):
+        ts = str(self.df()[['head.ts']].min().to_string(index=False)).strip()
+        te = str(self.df()[['head.endts']].max().to_string(index=False)).strip()
+        return (ts, te)
+
+    def describe(self):
+        _df = self.df().replace('', np.nan).dropna(axis=0, how='any', subset=['file.path'])
+        paths = _df.groupby(['file.path']).count()[['head.ts']].rename(columns={"head.ts": "count"})
+        return paths.sort_values(by='count', ascending=False)
+
+    def score(self):
+        for r in self.data:
+            if len(r['tags']) > 0:
+                return r['tags'][2]
+        return 0
+
+    def tags(self):
+        tags = set()
+        for r in self.data:
+            if len(r['tags']) > 0:
+                for t in r['tags'][1]:
+                    tags.add(str(t))
+        return tags if len(tags) > 0 else None
+
+    def dot(self, withoid=False, peek=True, peeksize=3, showtags=False):
+        node = 'FE|{{{{{0}|{1}}}|{{{2}|{3}}}{5}}}'
+        peeknode = 'FE|{{{{{0}|{1}}}|{{{2}|{3}}}|{{{4}}}{5}}}'
+        oidnode = 'FE|{{{0}|{{{1}|{2}}}|{{{3}|{4}}}{5}}}'
+        peekoidnode = 'FE|{{{0}|{{{1}|{2}}}|{{{3}|{4}}}|{{{5}}}{6}}}'
+        filetype = str(self.df()[['file.type']].sum(axis=0, skipna=True)['file.type'])
+        filepath = self.df()[['file.path', 'file.newpath']].sum(axis=0, skipna=True)
+        opath = str(filepath['file.path'])
+        npath = str(filepath['file.newpath'])
+        ufiles = len(self.df()['file.path'].unique())
+        res = self.df()[['res', 'head.ts']].groupby(['res']).count()[['head.ts']].rename(columns={'head.ts': 'count'})
+        reslist = res.index.tolist()
+        details = reslist[:peeksize] + (reslist[peeksize:] and ['...'])
+        peekstr = _escape('\\n'.join(details))
+        tags = '|{{{0}}}'.format(str(self.tags()))
+        if peek:
+            return (
+                peekoidnode.format(self.oid, ufiles, filetype, opath, npath, peekstr, tags)
+                if withoid
+                else peeknode.format(ufiles, filetype, opath, npath, peekstr, tags)
+            )
+        else:
+            return (
+                oidnode.format(self.oid, ufiles, filetype, opath, npath, tags)
+                if withoid
+                else node.format(ufiles, filetype, opath, npath, tags)
+            )
+
+    def __key(self):
+        return (self.exe, self.args, self.type)
+
+    def __hash__(self):
+        return _hash(self.__key())
+
+    def __eq__(self, other):
+        if isinstance(other, FileEvtNode):
+            return self.__key() == other.__key()
+        return NotImplemented
+
+    def __str__(self):
+        return str(self.__key())
+
 class FileFlowNode(Node):
     """
     **FileFlowNode**
@@ -885,7 +1057,7 @@ class FileFlowNode(Node):
         ufiles = len(self.df()['file.path'].unique())
         res = self.df()[['res', 'head.ts']].groupby(['res']).count()[['head.ts']].rename(columns={'head.ts': 'count'})
         reslist = res.index.tolist()
-        details = reslist[-peeksize:] + (reslist[peeksize:] and ['...'])
+        details = reslist[:peeksize] + (reslist[peeksize:] and ['...'])
         peekstr = _escape('\\n'.join(details))
         tags = '|{{{0}}}'.format(str(self.tags())) if showtags and self.tags() else ''
         if peek:

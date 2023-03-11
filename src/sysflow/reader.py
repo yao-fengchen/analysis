@@ -33,7 +33,6 @@ class NestedNamespace(SimpleNamespace):
 def hashDeal(o):
     return int(hashlib.md5(json.dumps(o).encode('utf-8')).hexdigest(), 16)
 
-
 class SFReader(object):
     def __init__(self, filename):
         self.filename = filename
@@ -86,6 +85,10 @@ class FlattenedSFReader(SFReader):
         key = hpid.to_bytes((hpid.bit_length() + 7) // 8, byteorder='little')
         key += createTS.to_bytes((createTS.bit_length() + 7) // 8, byteorder='little')
         return key
+    
+    def getFileKey(self, cid, path):
+        key = hashDeal(cid + path)
+        return key
 
     def __next__(self):
         while True:
@@ -115,11 +118,12 @@ class FlattenedSFReader(SFReader):
 
             if hasattr(rec, "file"):
                 file = rec.file
-                fileOID = rec.file.oid
-                self.files[fileOID] = file
-                # newfileOID = file.newoid
-                # if newfileOID is not None:
-                #     if not
+                key = ""
+                if hasattr(file, "path"):
+                    key = self.getFileKey(rec.container.id, rec.file.path)
+                else:
+                    key = self.getFileKey(rec.container.id, rec.file.newpath)
+                self.files[key] = rec
             head = rec.head if hasattr(rec, "head") else None
             event = rec.event if hasattr(rec, "event") else None
             host = rec.host if hasattr(rec, "host") else None

@@ -22,14 +22,18 @@ def setSearchOptional(beginTime="2022-12-12T12:12:12", endTime=datetime.now().st
 
 
 def getResult(esResult, index):
-    with open(outputDir + '/' + index + '.log', 'w+') as f:
+    with open(index + '.log', 'w+') as f:
+        data = []
         for item in esResult:
             source = item['_source']
             if 'process' in source and 'aname' in source['process']:
                 source['process']['aname'] = source['process']['aname'].split(',')
             if 'event' in source and 'opflags' in source['event']:
                 source['event']['opflags'] = source['event']['opflags'].split()
-            f.write(str(item['_source'])+'\n')
+            data.append((item['_source']['timestamp'], str(item['_source'])))
+            data.sort(reverse=False)
+        for d in data:
+            f.write(str(d[1])+'\n')
 
 
 def getSearchResult(esSearchOptions, scroll='5m', index='events', timeout="1m"):
@@ -51,8 +55,6 @@ def search(index):
 
 if __name__ == "__main__":
     index = "events"
-    outputDir = "events"
-    os.system("mkdir -p %s" % outputDir)
 
     t1 = time.time()
     client = Elasticsearch("http://localhost:9200")
